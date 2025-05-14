@@ -75,6 +75,11 @@ def write_gct(df, gct_file, float_format='%.6g', compresslevel=6):
         df.to_csv(gct, sep='\t', float_format=float_format)
 
 
+import pandas as pd
+import numpy as np
+from collections import defaultdict
+import gzip
+
 def gtf_to_tss_bed(annotation_gtf, feature='gene', exclude_chrs=[], phenotype_id='gene_id'):
     """Parse genes and TSSs from GTF and return DataFrame for BED output"""
     chrom = []
@@ -91,7 +96,8 @@ def gtf_to_tss_bed(annotation_gtf, feature='gene', exclude_chrs=[], phenotype_id
     with opener as gtf:
         for row in gtf:
             row = row.strip().split('\t')
-            if row[0][0] == '#' or row[2] != feature: continue # skip header
+            if row[0][0] == '#' or row[2] != feature: 
+                continue # skip header
             chrom.append(row[0])
 
             # TSS: gene start (0-based coordinates for BED)
@@ -107,6 +113,8 @@ def gtf_to_tss_bed(annotation_gtf, feature='gene', exclude_chrs=[], phenotype_id
             attributes = defaultdict()
             for a in row[8].replace('"', '').split(';')[:-1]:
                 kv = a.strip().split(' ')
+                if len(kv) < 2:
+                    kv.append('') # v was an empty string
                 if kv[0]!='tag':
                     attributes[kv[0]] = kv[1]
                 else:
