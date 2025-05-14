@@ -134,6 +134,6 @@ def gtf_to_tss_bed(annotation_gtf, feature='gene', exclude_chrs=[], phenotype_id
     bed_df = bed_df[mask]
 
     # sort by start position
-    bed_df = bed_df.groupby('chr', sort=False, group_keys=False).apply(lambda x: x.sort_values('start'))
+    bed_df = bed_df.groupby('chr', sort=False, group_keys=False).apply(lambda x: x.sort_values('start'),include_groups=True)
 
     return bed_df
